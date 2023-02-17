@@ -1,0 +1,312 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <pthread.h>
+
+#define PORT 8888
+#define MAX_CLIENTS 10
+#define BUF_SIZE 1024
+
+#define PACKET_TYPE_HELLO 1
+#define PACKET_TYPE_MESSAGE 2
+
+struct packet_header {
+    int type;
+    int size;
+    int id;
+};
+
+struct user {
+    int id;
+    int socket_id;
+    char username[32];
+    char password[32];
+    int is_logged_in;
+};
+
+struct user users[MAX_CLIENTS];
+int next_user_id = 1;
+
+void add_user(int socket_id);
+void remove_user(int id);
+struct user *find_user_by_id(int id);
+void handle_hello_packet(struct packet_header *header, char *payload, int socket_id);
+void handle_message_packet(struct packet_header *header, char *payload, int socket_id);
+
+void *handle_client(void *client_socket_ptr);
+
+int main(int argc, char **argv) {
+    int server_socket, client_socket, addr_len;
+    struct sockaddr_in server_addr, client_addr;
+    pthread_t thread_id;
+    int *client_socket_ptr;
+
+    // Initialize users array
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        users[i].id = 0;
+        users[i].socket_id = -1;
+        memset(users[i].username, 0, 32);
+        memset(users[i].password, 0, 32);
+        users[i].is_logged_in = 0;
+    }
+
+    // Create server socket
+    if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Bind server socket to port
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Listen for incoming connections
+    if (listen(server_socket, MAX_CLIENTS) < 0) {
+        perror("listen failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Accept incoming connections and spawn new thread for each client
+    while (1) {
+        addr_len = sizeof(client_addr);
+        if ((client_socket = accept(server_socket, (struct sockaddr *)&client_addr, (socklen_t *)&addr_len)) < 0) {
+            perror("accept failed");
+            continue;
+        }
+
+        // Add new user to users array
+        add_user(client_socket);
+
+        client_socket_ptr = malloc(sizeof(int));
+        *client_socket_ptr = client_socket;
+
+        if (pthread_create(&thread_id, NULL, handle_client, (void *)client_socket_ptr) != 0) {
+            perror("thread create failed");
+            free(client_socket_ptr);
+            continue;
+        }
+    }
+
+    return 0;
+}
+
+void *handle_client(void *client_socket_ptr) {
+    int client_socket = *(int *)client_socket_ptr;
+    free(client_socket_ptr);
+
+    struct user *user = find_user_by_id(next_user_id - 1);
+    int user_id = user->id;
+
+    // Send hello packet to client
+    struct packet_header hello_header;
+    hello_header.type = PACKET_TYPE_HELLO;
+    hello_header.size = 0;
+    hello_header.id = user_id;
+    char hello_payload[BUF_SIZE];
+    snprintf(hello_payload, BUF_SIZE, "Hello! Please enter your username and/or password.\n");
+	
+        if (send(user->socket_id, &hello_header, sizeof(struct packet_header), 0) == -1) {
+            perror("send failed");
+            close(client_socket);
+            pthread_exit(NULL);
+        }
+        if (send(user->socket_id, hello_payload, strlen(hello_payload), 0) == -1) {
+            perror("send failed");
+            close(client_socket);
+            pthread_exit(NULL);
+        }
+
+        while (1) {
+            char buf[BUF_SIZE];
+            int bytes_received = recv(client_socket, buf, BUF_SIZE, 0);
+            if (bytes_received == -1) {
+                perror("recv failed");
+                break;
+            } else if (bytes_received == 0) {
+                printf("client %d disconnected\n", user_id);
+                break;
+            } else if (bytes_received > 0 && bytes_received < BUF_SIZE) {
+                // Handle incoming packet from client
+                struct packet_header *header = (struct packet_header *)buf;
+                char *payload = buf + sizeof(struct packet_header);
+
+                if (header->size > BUF_SIZE - sizeof(struct packet_header)) {
+                    fprintf(stderr, "received packet size is larger than buffer can hold\n");
+                    break;
+                }
+
+                switch (header->type) {
+                    case PACKET_TYPE_HELLO:
+                        handle_hello_packet(header, payload, user->socket_id);
+                        break;
+                    case PACKET_TYPE_MESSAGE:
+                        handle_message_packet(header, payload, user->socket_id);
+                        break;
+                    default:
+                        fprintf(stderr, "received packet with unknown type %d\n", header->type);
+                        break;
+                }
+
+                memset(buf, 0, BUF_SIZE);
+            } else {
+                fprintf(stderr, "received more data than buffer can hold\n");
+                break;
+            }
+        }
+
+        // Remove user from users array
+        remove_user(user_id);
+
+        close(client_socket);
+        pthread_exit(NULL);
+    }
+}
+
+void handle_hello_packet(struct packet_header *header, char *payload, int socket_id) {
+    if (header->id < 1 || header->id >= next_user_id) {
+        fprintf(stderr, "received hello packet with invalid user ID %d\n", header->id);
+        return;
+    }
+
+    struct user *user = find_user_by_id(header->id);
+
+    if (strlen(user->username) == 0) {
+        // First input is username
+        if (strlen(payload) < 32) {
+            strcpy(user->username, payload);
+            struct packet_header welcome_header;
+            welcome_header.type = PACKET_TYPE_HELLO;
+            welcome_header.size = 0;
+            welcome_header.id = header->id;
+            char welcome_payload[BUF_SIZE];
+            snprintf(welcome_payload, BUF_SIZE, "Hello %s! Please enter your password.\n", user->username);
+            if (send(socket_id, &welcome_header, sizeof(struct packet_header), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+            if (send(socket_id, welcome_payload, strlen(welcome_payload), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+        } else {
+            struct packet_header error_header;
+            error_header.type = PACKET_TYPE_HELLO;
+            error_header.size = 0;
+            error_header.id = header->id;
+            char error_payload[BUF_SIZE];
+            snprintf(error_payload, BUF_SIZE, "Username is too long. Please try again.\n");
+            if (send(socket_id, &error_header, sizeof(struct packet_header), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+            if            (send(socket_id, error_payload, strlen(error_payload), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+        }
+    } else if (strlen(user->password) == 0) {
+        // Second input is password
+        if (strlen(payload) < 32) {
+            strcpy(user->password, payload);
+            user->is_logged_in = 1;
+            struct packet_header welcome_header;
+            welcome_header.type = PACKET_TYPE_HELLO;
+            welcome_header.size = 0;
+            welcome_header.id = header->id;
+            char welcome_payload[BUF_SIZE];
+            snprintf(welcome_payload, BUF_SIZE, "Welcome %s!\n", user->username);
+            if (send(socket_id, &welcome_header, sizeof(struct packet_header), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+            if (send(socket_id, welcome_payload, strlen(welcome_payload), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+        } else {
+            struct packet_header error_header;
+            error_header.type = PACKET_TYPE_HELLO;
+            error_header.size = 0;
+            error_header.id = header->id;
+            char error_payload[BUF_SIZE];
+            snprintf(error_payload, BUF_SIZE, "Password is too long. Please try again.\n");
+            if (send(socket_id, &error_header, sizeof(struct packet_header), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+            if (send(socket_id, error_payload, strlen(error_payload), 0) == -1) {
+                perror("send failed");
+                return;
+            }
+            memset(user->password, 0, 32);
+        }
+    } else {
+        // Third input and beyond are handled normally
+        // ...
+
+        // Send response to client
+        if (send(socket_id, payload, header->size, 0) == -1) {
+            perror("send failed");
+            return;
+        }
+    }
+}
+
+void handle_message_packet(struct packet_header *header, char *payload, int socket_id) {
+    if (header->id < 1 || header->id >= next_user_id) {
+        fprintf(stderr, "received message packet with invalid user ID %d\n", header->id);
+        return;
+    }
+
+    struct user *user = find_user_by_id(header->id);
+
+    if (!user->is_logged_in) {
+        fprintf(stderr, "received message packet from user that hasn't authenticated\n");
+        return;
+    }
+
+    // Handle message packet normally
+    // ...
+
+    // Send response to client
+    if (send(socket_id, payload, header->size, 0) == -1) {
+        perror("send failed");
+        return;
+    }
+}
+
+void add_user(int socket_id) {
+    struct user *user = find_user_by_id(0);
+    if (user == NULL) {
+        fprintf(stderr, "max users reached\n");
+        return;
+    }
+    user->id = next_user_id;
+    user->socket_id = socket_id;
+    next_user_id++;
+}
+
+void remove_user(int id) {
+    struct user *user = find_user_by_id(id);
+    user->id = 0;
+    user->socket_id = -1;
+    memset(user->username, 0, 32);
+    memset(user->password, 0, 32);
+    user->is_logged_in = 0;
+}
+
+struct user *find_user_by_id(int id) {
+    for (int i = 0; i < MAX_CLIENTS; i++)
+        if (users[i].id == id) {
+            return &users[i];
+        }
+    }
+    return NULL;
+}

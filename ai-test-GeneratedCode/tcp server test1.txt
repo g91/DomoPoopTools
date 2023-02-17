@@ -1,0 +1,233 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+
+namespace TCPServer
+{
+    class Program
+    {
+        private static readonly TcpListener Listener = new TcpListener(IPAddress.Any, 12345);
+        private static readonly List<TcpClient> Clients = new List<TcpClient>();
+        private static readonly Dictionary<TcpClient, int> ClientIds = new Dictionary<TcpClient, int>();
+        private static int _nextClientId = 0;
+
+        static void Main(string[] args)
+        {
+            Listener.Start();
+            Listener.BeginAcceptTcpClient(AcceptCallback, null);
+
+            Console.WriteLine("Server started. Waiting for connections...");
+
+            while (true)
+            {
+                string input = Console.ReadLine();
+                if (input == "quit")
+                {
+                    break;
+                }
+                else if (input == "ids")
+                {
+                    Console.WriteLine("Available socket IDs:");
+                    foreach (KeyValuePair<TcpClient, int> kvp in ClientIds)
+                    {
+                        Console.WriteLine(kvp.Value);
+                    }
+                }
+                else if (input == "online")
+                {
+                    Console.WriteLine("Online users:");
+                    foreach (KeyValuePair<TcpClient, int> kvp in ClientIds)
+                    {
+                        Console.WriteLine("{0}: {1}", kvp.Value, kvp.Key.Client.RemoteEndPoint);
+                    }
+                }
+                else if (input.StartsWith("send "))
+                {
+                    string[] parts = input.Split(' ');
+                    int clientId = int.Parse(parts[1]);
+                    string message = input.Substring(parts[0].Length + parts[1].Length + 2);
+                    SendMessage(clientId, message);
+                }
+                else
+                {
+                    Console.WriteLine("Unknown command. Available commands: quit, ids, online, send [client_id] [message]");
+                }
+            }
+
+            Listener.Stop();
+        }
+
+        private static void AcceptCallback(IAsyncResult result)
+        {
+            TcpClient client = Listener.EndAcceptTcpClient(result);
+            Clients.Add(client);
+            ClientIds[client] = _nextClientId++;
+            Console.WriteLine("Accepted connection from " + client.Client.RemoteEndPoint);
+            ThreadPool.QueueUserWorkItem(HandleClient, client);
+            Listener.BeginAcceptTcpClient(AcceptCallback, null);
+        }
+
+        private static void HandleClient(object state)
+        {
+            TcpClient client = (TcpClient)state;
+
+            // Send hello packet
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.Hello, ClientIds[client].ToString());
+            client.GetStream().Write(buffer, 0, buffer.Length);
+
+            // Receive packets
+            while (true)
+            {
+                Packet packet = PacketHandler.ReceivePacket(client.GetStream());
+                if (packet == null)
+                {
+                    break;
+                }
+                HandlePacket(client, packet);
+            }
+
+            Clients.Remove(client);
+            ClientIds.Remove(client);
+            Console.WriteLine("Disconnected from " + client.Client.RemoteEndPoint);
+        }
+
+        private static void HandlePacket(TcpClient client, Packet packet)
+        {
+            switch (packet.Type)
+            {
+                case PacketType.Message:
+                    Console.WriteLine("Received message from client {0}: {1}", ClientIds[client], packet.Data);
+                    break;
+                default:
+                    Console.WriteLine("Received unknown packet type from client {0}: {1}", ClientIds[client], packet.Type);
+                    break;
+            }
+        }
+
+        private static void SendMessage(int clientId, string message)
+        {
+            TcpClient client = Clients[clientId];
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.Message, message);
+            client.GetStream().Write(buffer, 0, buffer.Length);
+        }
+    }
+
+    enum PacketType
+    {
+        Hello,
+        Message
+    }
+
+    class Packet
+    {
+        public PacketType Type { get; private set; }
+        public string Data { get; private set; }
+
+        public Packet(PacketType type, string data)
+        {
+            Type = type;
+            Data = data;
+        }
+    }
+
+    static class PacketHandler
+    {
+        private static readonly byte[] _header = Encoding.ASCII.GetBytes("PACK");
+        private static readonly int _headerSize = _header.Length;
+        private static readonly int _typeSize = sizeof(int);
+        private static readonly int _sizeSize = sizeof(int);
+
+        public static byte[] CreatePacket(PacketType type, string data)
+        {
+            byte[] typeBytes = BitConverter.GetBytes((int)type);
+            byte[] dataBytes = Encoding.ASCII.GetBytes(data);
+            int dataSize = dataBytes.Length;
+            byte[] sizeBytes = BitConverter.GetBytes(dataSize);
+            byte[] packet = new byte[_headerSize + _typeSize + _sizeSize + dataSize];
+            Array.Copy(_header, packet, _headerSize);
+            Array.Copy(typeBytes, 0, packet, _headerSize, _typeSize);
+            Array.Copy(sizeBytes, 0, packet, _headerSize + _typeSize, _sizeSize);
+            Array.Copy(dataBytes, 0, packet, _headerSize + _typeSize + _sizeSize, dataSize);
+            return packet;
+        }
+
+        public static Packet ReceivePacket(NetworkStream stream)
+        {
+            byte[] header = new byte[_headerSize];
+            int bytesReceived = 0;
+            while (bytesReceived < _headerSize)
+            {
+                int newBytes = stream.Read(header, bytesReceived, _headerSize - bytesReceived);
+                if (newBytes == 0)
+                {
+                    return null;
+                }
+                bytesReceived += newBytes;
+            }
+
+            if (!CheckHeader(header))
+            {
+                Console.WriteLine("Received invalid header");
+                return null;
+            }
+
+            byte[] typeBytes = new byte[_typeSize];
+            bytesReceived = 0;
+            while (bytesReceived < _typeSize)
+            {
+                int newBytes = stream.Read(typeBytes, bytesReceived, _typeSize - bytesReceived);
+                if (newBytes == 0)
+                {
+                    return null;
+                }
+                bytesReceived += newBytes;
+            }
+
+            byte[] sizeBytes = new byte[_sizeSize];
+            bytesReceived = 0;
+            while (bytesReceived < _sizeSize)
+            {
+                int newBytes = stream.Read(sizeBytes, bytesReceived, _sizeSize - bytesReceived);
+                if (newBytes == 0)
+                {
+                    return null;
+                }
+                bytesReceived += newBytes;
+            }
+
+            int dataSize = BitConverter.ToInt32(sizeBytes, 0);
+            byte[] dataBytes = new byte[dataSize];
+            bytesReceived = 0;
+            while (bytesReceived < dataSize)
+            {
+                int newBytes = stream.Read(dataBytes, bytesReceived, dataSize - bytesReceived);
+                if (newBytes == 0)
+                {
+                    return null;
+                }
+                bytesReceived += newBytes;
+            }
+
+            PacketType type = (PacketType)BitConverter.ToInt32(typeBytes, 0);
+            string data = Encoding.ASCII.GetString(dataBytes);
+            return new Packet(type, data);
+        }
+
+        private static bool CheckHeader(byte[] header)
+        {
+            for (int i = 0; i < _headerSize; i++)
+            {
+                if (header[i] != _header[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}
+
+

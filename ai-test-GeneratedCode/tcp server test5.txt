@@ -1,0 +1,348 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+
+namespace TCPServer
+{
+    class Program
+    {
+        private static readonly TcpListener Listener = new TcpListener(IPAddress.Any, 12345);
+        private static readonly List<TcpClient> Clients = new List<TcpClient>();
+        private static readonly Dictionary<TcpClient, int> ClientIds = new Dictionary<TcpClient, int>();
+        private static int _nextClientId = 0;
+        private static readonly TcpClient PassThroughClient = new TcpClient();
+
+        static void Main(string[] args)
+        {
+            Listener.Start();
+            Listener.BeginAcceptTcpClient(AcceptCallback, null);
+
+            Console.WriteLine("Server started. Waiting for connections...");
+
+            while (true)
+            {
+                string input = Console.ReadLine();
+                if (input == "quit")
+                {
+                    break;
+                }
+                else if (input == "ids")
+                {
+                    Console.WriteLine("Available socket IDs:");
+                    foreach (KeyValuePair<TcpClient, int> kvp in ClientIds)
+                    {
+                        Console.WriteLine(kvp.Value);
+                    }
+                }
+                else if (input == "online")
+                {
+                    Console.WriteLine("Online users:");
+                    foreach (KeyValuePair<TcpClient, int> kvp in ClientIds)
+                    {
+                        Console.WriteLine("{0}: {1}", kvp.Value, kvp.Key.Client.RemoteEndPoint);
+                    }
+                }
+                else if (input.StartsWith("send "))
+                {
+                    string[] parts = input.Split(' ');
+                    int clientId = int.Parse(parts[1]);
+                    string message = input.Substring(parts[0].Length + parts[1].Length + 2);
+                    SendMessage(clientId, Encoding.ASCII.GetBytes(message));
+                }
+                else if (input.StartsWith("broadcast "))
+                {
+                    string message = input.Substring("broadcast ".Length);
+                    BroadcastMessage(Encoding.ASCII.GetBytes(message));
+                }
+                else
+                {
+                    Console.WriteLine("Unknown command. Available commands: quit, ids, online, send [client_id] [message], broadcast [message]");
+                }
+            }
+
+            Listener.Stop();
+        }
+
+        private static void AcceptCallback(IAsyncResult result)
+        {
+            TcpClient client = Listener.EndAcceptTcpClient(result);
+            Clients.Add(client);
+            ClientIds[client] = _nextClientId++;
+            Console.WriteLine("Accepted connection from " + client.Client.RemoteEndPoint);
+            ThreadPool.QueueUserWorkItem(HandleClient, client);
+            Listener.BeginAcceptTcpClient(AcceptCallback, null);
+        }
+
+        private static void HandleClient(object state)
+        {
+            try
+            {
+                TcpClient client = (TcpClient)state;
+
+                // Send hello packet
+                byte[] buffer = PacketHandler.CreatePacket(PacketType.Hello, ClientIds[client].ToString());
+                client.GetStream().Write(buffer, 0, buffer.Length);
+
+                // Receive packets
+                while (true)
+                {
+                    Packet packet = PacketHandler.ReceivePacket(client.GetStream());
+                    if (packet == null)
+                    {
+                        break;
+                    }
+                    HandlePacket(client, packet);
+                }
+
+                Clients.Remove(client);
+                ClientIds.Remove(client);
+                Console.WriteLine("Disconnected from " + client.Client.RemoteEndPoint);
+            }
+            catch
+            {
+                TcpClient client = (TcpClient)state;
+
+                Clients.Remove(client);
+                ClientIds.Remove(client);
+                Console.WriteLine("Disconnected from " + client.Client.RemoteEndPoint);
+            }
+           
+        }
+
+        private static void HandlePacket(TcpClient client, Packet packet)
+        {
+            switch (packet.Type)
+            {
+                case PacketType.Hello:
+                    HandleHelloPacket(client);
+                    break;
+                case PacketType.Message:
+                    Console.WriteLine("Received message from client {0}: {1}", ClientIds[client], Encoding.ASCII.GetString(packet.Data));
+                    BroadcastMessage(Encoding.ASCII.GetBytes("Client " + ClientIds[client] + ": " + Encoding.ASCII.GetString(packet.Data)));
+                    break;
+                case PacketType.Echo:
+                    SendMessage(ClientIds[client], packet.Data);
+                    break;
+                case PacketType.GetOnlineClients:
+                    SendOnlineClients(ClientIds[client]);
+                    break;
+                case PacketType.Login:
+                    bool success = TryLogin(Encoding.ASCII.GetString(packet.Data), client);
+                    SendLoginResult(ClientIds[client], success);
+                    break;
+                default:
+                    Console.WriteLine("Received unknown packet type from client {0}: {1}", ClientIds[client], packet.Type);
+                    break;
+            }
+        }
+
+        private static void HandleHelloPacket(TcpClient client)
+        {
+            SendHelloResponse(client);
+        }
+
+        private static void SendHelloResponse(TcpClient client)
+        {
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.Hello, "Welcome to the server");
+            try
+            {
+                client.GetStream().Write(buffer, 0, buffer.Length);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Client {0} disconnected", ClientIds[client]);
+                //Clients.Remove(ClientIds[client]);
+                ClientIds.Remove(client);
+            }
+        }
+
+
+        private static void SendOnlineClients(int clientId)
+        {
+            TcpClient client = Clients[clientId];
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.OnlineClients, Clients.Count.ToString());
+            client.GetStream().Write(buffer, 0, buffer.Length);
+        }
+
+        private static void SendMessage(int clientId, byte[] data)
+        {
+            TcpClient client = Clients[clientId];
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.Message, data);
+            client.GetStream().Write(buffer, 0, buffer.Length);
+        }
+
+        private static void BroadcastMessage(byte[] data)
+        {
+            foreach (TcpClient client in Clients)
+            {
+                byte[] buffer = PacketHandler.CreatePacket(PacketType.Message, data);
+                client.GetStream().Write(buffer, 0, buffer.Length);
+            }
+        }
+
+        private static void SendLoginResult(int clientId, bool success)
+        {
+            TcpClient client = Clients[clientId];
+            byte[] buffer = PacketHandler.CreatePacket(PacketType.LoginResult, success ? "Success" : "Failure");
+            client.GetStream().Write(buffer, 0, buffer.Length);
+        }
+
+        private static bool TryLogin(string data, TcpClient client)
+        {
+            // Example login data format: "username:password"
+            string[] parts = data.Split(':');
+            string username = parts[0];
+            string password = parts[1];
+
+            // Example check against stored data
+            if (username == "user1" && password == "pass1")
+            {
+                return true;
+            }
+            else if (username == "user2" && password == "pass2")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+    }
+
+    enum PacketType
+    {
+        Hello,
+        Message,
+        Echo,
+        GetOnlineClients,
+        OnlineClients,
+        Login,
+        LoginResult
+    }
+
+    class Packet
+    {
+        public PacketType Type { get; private set; }
+        public byte[] Data { get; private set; }
+
+        public Packet(PacketType type, byte[] data)
+        {
+            Type = type;
+            Data = data;
+        }
+    }
+
+    static class PacketHandler
+    {
+        private static readonly byte[] _header = Encoding.ASCII.GetBytes("PACK");
+        private static readonly int _headerSize = _header.Length;
+        private static readonly int _typeSize = sizeof(int);
+        private static readonly int _sizeSize = sizeof(int);
+
+        public static byte[] CreatePacket(PacketType type, byte[] data)
+        {
+            byte[] typeBytes = BitConverter.GetBytes((int)type);
+            int dataSize = data.Length;
+            byte[] sizeBytes = BitConverter.GetBytes(dataSize);
+            byte[] buffer = new byte[_headerSize + _typeSize + _sizeSize + dataSize];
+            _header.CopyTo(buffer, 0);
+            typeBytes.CopyTo(buffer, _headerSize);
+            sizeBytes.CopyTo(buffer, _headerSize + _typeSize);
+            data.CopyTo(buffer, _headerSize + _typeSize + _sizeSize);
+            return buffer;
+        }
+
+        public static byte[] CreatePacket(PacketType type, string data)
+        {
+            return CreatePacket(type, Encoding.ASCII.GetBytes(data));
+        }
+
+        public static Packet ReceivePacket(NetworkStream stream)
+        {
+            try
+            {
+                byte[] header = new byte[_headerSize];
+                int bytesReceived = 0;
+                while (bytesReceived < _headerSize)
+                {
+                    int newBytes = stream.Read(header, bytesReceived, _headerSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                if (!CheckHeader(header))
+                {
+                    Console.WriteLine("Received invalid header");
+                    return null;
+                }
+
+                byte[] typeBytes = new byte[_typeSize];
+                bytesReceived = 0;
+                while (bytesReceived < _typeSize)
+                {
+                    int newBytes = stream.Read(typeBytes, bytesReceived, _typeSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                byte[] sizeBytes = new byte[_sizeSize];
+                bytesReceived = 0;
+                while (bytesReceived < _sizeSize)
+                {
+                    int newBytes = stream.Read(sizeBytes, bytesReceived, _sizeSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                int dataSize = BitConverter.ToInt32(sizeBytes, 0);
+                byte[] dataBytes = new byte[dataSize];
+                bytesReceived = 0;
+                while (bytesReceived < dataSize)
+                {
+                    int newBytes = stream.Read(dataBytes, bytesReceived, dataSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                PacketType type = (PacketType)BitConverter.ToInt32(typeBytes, 0);
+                return new Packet(type, dataBytes);
+            }
+            catch
+            {
+                byte[] dataBytes = new byte[2];
+                return new Packet(0, dataBytes);
+            }
+        }
+
+        private static bool CheckHeader(byte[] header)
+        {
+            for (int i = 0; i < _headerSize; i++)
+            {
+                if (header[i] != _header[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}
+

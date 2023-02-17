@@ -1,0 +1,159 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+
+public class ClientData
+{
+    public string Username;
+    public string Password;
+    public string ConnectionInfo;
+}
+
+public class TcpServer
+{
+    private TcpListener listener;
+    private Thread serverThread;
+    private Dictionary<int, TcpClient> clients = new Dictionary<int, TcpClient>();
+    private Dictionary<int, ClientData> clientData = new Dictionary<int, ClientData>();
+    private int nextClientId = 0;
+
+    public void StartListening(int port)
+    {
+        listener = new TcpListener(IPAddress.Any, port);
+        serverThread = new Thread(Listen);
+        serverThread.Start();
+    }
+
+    public void StopListening()
+    {
+        listener.Stop();
+        serverThread.Join();
+    }
+
+    public IEnumerable<int> GetClientIds()
+    {
+        return clients.Keys;
+    }
+
+    public TcpClient GetClient(int clientId)
+    {
+        return clients[clientId];
+    }
+
+    public ClientData GetClientData(int clientId)
+    {
+        return clientData[clientId];
+    }
+
+    private void Listen()
+    {
+        try
+        {
+            listener.Start();
+            while (true)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                int clientId = nextClientId++;
+                clients.Add(clientId, client);
+                Thread clientThread = new Thread(() => HandleClient(clientId));
+                clientThread.Start();
+            }
+        }
+        catch (SocketException e)
+        {
+            Console.WriteLine($"SocketException: {e}");
+        }
+        finally
+        {
+            listener.Stop();
+        }
+    }
+
+    private void HandleClient(int clientId)
+    {
+        TcpClient client = clients[clientId];
+        NetworkStream stream = client.GetStream();
+
+        // Send a welcome packet
+        string welcome = "Welcome to the server!";
+        SendPacket(client, 2, welcome);
+
+        while (true)
+        {
+            // Read the setup packet header
+            byte[] headerBuffer = new byte[8];
+            stream.Read(headerBuffer, 0, 8);
+
+            int packetType = BitConverter.ToInt32(headerBuffer, 0);
+            int packetSize = BitConverter.ToInt32(headerBuffer, 4);
+
+            // Handle the setup packet
+            if (packetType == 1) // handle the hello packet
+            {
+                // Read the hello packet
+                byte[] helloBuffer = new byte[1024];
+                int helloSize = stream.Read(helloBuffer, 0, helloBuffer.Length);
+                string hello = System.Text.Encoding.UTF8.GetString(helloBuffer, 0, helloSize);
+                string[] helloParts = hello.Split(',');
+
+                if (helloParts.Length != 3)
+                {
+                    Console.WriteLine($"Received invalid hello packet from client {clientId}");
+                    client.Close();
+                    clients.Remove(clientId);
+                    return;
+                }
+
+                string username = helloParts[0];
+                string password = helloParts[1];
+                string connectionInfo = helloParts[2];
+
+                // Update the client data
+                ClientData data = clientData[clientId];
+                data.Username = username;
+                data.Password = password;
+                data.ConnectionInfo = connectionInfo;
+
+                // Send a response packet
+                string response = "Hello packet received!";
+                SendPacket(client, 2, response);
+            }
+            else if (packetType == 2) // or other packet type that you want to handle
+            {
+                // Read the data packet
+                byte[] dataBuffer = new byte[packetSize];
+                stream.Read(dataBuffer, 0, packetSize);
+                string data = System.Text.Encoding.UTF8.GetString(dataBuffer);
+
+                // Handle the data packet
+                // Do something with the data here
+                Console.WriteLine($"Received data from client {clientId}: {data}");
+
+                // Send a response packet
+                int responsePacketId = 3; // or other packet ID for response
+                string response = "Response data";
+                SendPacket(client, responsePacketId, response);
+            }
+        }
+
+        client.Close();
+        clients.Remove(clientId);
+        clientData.Remove(clientId);
+    }
+    private void SendPacket(TcpClient client, int packetType, string data)
+    {
+        NetworkStream stream = client.GetStream();
+
+        // Create the setup packet header
+        byte[] headerBuffer = new byte[8];
+        BitConverter.GetBytes(packetType).CopyTo(headerBuffer, 0);
+        BitConverter.GetBytes(data.Length).CopyTo(headerBuffer, 4);
+        stream.Write(headerBuffer, 0, 8);
+
+        // Send the data packet
+        byte[] dataBuffer = System.Text.Encoding.UTF8.GetBytes(data);
+        stream.Write(dataBuffer, 0, dataBuffer.Length);
+    }
+}

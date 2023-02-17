@@ -1,0 +1,63 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+public void ListFoldersAndTxtFiles()
+{
+    // Get the path of the folder you want to search in
+    string folderPath = @"C:\Users\username\Documents";
+
+    // Get a list of all the subfolders in the folder
+    string[] subfolders = Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
+
+    // Create a list to store the paths of all the txt files in the folder and its subfolders
+    var txtFiles = subfolders.SelectMany(subfolder => Directory.GetFiles(subfolder, "*.txt", SearchOption.TopDirectoryOnly));
+
+    // Create a listBox2 to display the list of folders and txt files
+    listBox2 listBox2 = new listBox2();
+    listBox2.Dock = DockStyle.Fill;
+
+    // Add the names of the folders and txt files to the listBox2
+    listBox2.Items.Add("Folders:");
+    foreach (string subfolder in subfolders)
+    {
+        listBox2.Items.Add(subfolder);
+    }
+
+    listBox2.Items.Add("");
+    listBox2.Items.Add("Txt files:");
+    foreach (string txtFile in txtFiles)
+    {
+        listBox2.Items.Add(txtFile);
+    }
+
+    // Create a textBox3 to display the contents of the selected txt file
+    textBox3 textBox3 = new textBox3();
+    textBox3.Dock = DockStyle.Fill;
+    textBox3.Multiline = true;
+
+    // Create a Form to display the listBox2 and textBox3
+    Form form = new Form();
+    form.Size = new System.Drawing.Size(800, 600);
+    form.Controls.Add(listBox2);
+    form.Controls.Add(textBox3);
+
+    // Add an event handler to the listBox2 to display the contents of the selected txt file in the textBox3
+    listBox2.SelectedIndexChanged += (sender, args) =>
+    {
+        string selectedItem = (string)listBox2.SelectedItem;
+        if (selectedItem.EndsWith(".txt"))
+        {
+            string txtFileContents = File.ReadAllText(selectedItem);
+            textBox3.Text = txtFileContents;
+        }
+        else
+        {
+            textBox3.Text = "";
+        }
+    };
+
+    // Show the Form
+    Application.Run(form);
+}

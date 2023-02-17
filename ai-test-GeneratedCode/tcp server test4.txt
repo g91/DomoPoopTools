@@ -1,0 +1,130 @@
+    enum PacketType
+    {
+        Hello,
+        Message,
+        Echo,
+        GetOnlineClients,
+        OnlineClients,
+        Login,
+        LoginResult
+    }
+
+    class Packet
+    {
+        public PacketType Type { get; private set; }
+        public byte[] Data { get; private set; }
+
+        public Packet(PacketType type, byte[] data)
+        {
+            Type = type;
+            Data = data;
+        }
+    }
+
+    static class PacketHandler
+    {
+        private static readonly byte[] _header = Encoding.ASCII.GetBytes("PACK");
+        private static readonly int _headerSize = _header.Length;
+        private static readonly int _typeSize = sizeof(int);
+        private static readonly int _sizeSize = sizeof(int);
+
+        public static byte[] CreatePacket(PacketType type, byte[] data)
+        {
+            byte[] typeBytes = BitConverter.GetBytes((int)type);
+            int dataSize = data.Length;
+            byte[] sizeBytes = BitConverter.GetBytes(dataSize);
+            byte[] buffer = new byte[_headerSize + _typeSize + _sizeSize + dataSize];
+            _header.CopyTo(buffer, 0);
+            typeBytes.CopyTo(buffer, _headerSize);
+            sizeBytes.CopyTo(buffer, _headerSize + _typeSize);
+            data.CopyTo(buffer, _headerSize + _typeSize + _sizeSize);
+            return buffer;
+        }
+
+        public static byte[] CreatePacket(PacketType type, string data)
+        {
+            return CreatePacket(type, Encoding.ASCII.GetBytes(data));
+        }
+
+        public static Packet ReceivePacket(NetworkStream stream)
+        {
+            try
+            {
+                byte[] header = new byte[_headerSize];
+                int bytesReceived = 0;
+                while (bytesReceived < _headerSize)
+                {
+                    int newBytes = stream.Read(header, bytesReceived, _headerSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                if (!CheckHeader(header))
+                {
+                    Console.WriteLine("Received invalid header");
+                    return null;
+                }
+
+                byte[] typeBytes = new byte[_typeSize];
+                bytesReceived = 0;
+                while (bytesReceived < _typeSize)
+                {
+                    int newBytes = stream.Read(typeBytes, bytesReceived, _typeSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                byte[] sizeBytes = new byte[_sizeSize];
+                bytesReceived = 0;
+                while (bytesReceived < _sizeSize)
+                {
+                    int newBytes = stream.Read(sizeBytes, bytesReceived, _sizeSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                int dataSize = BitConverter.ToInt32(sizeBytes, 0);
+                byte[] dataBytes = new byte[dataSize];
+                bytesReceived = 0;
+                while (bytesReceived < dataSize)
+                {
+                    int newBytes = stream.Read(dataBytes, bytesReceived, dataSize - bytesReceived);
+                    if (newBytes == 0)
+                    {
+                        return null;
+                    }
+                    bytesReceived += newBytes;
+                }
+
+                PacketType type = (PacketType)BitConverter.ToInt32(typeBytes, 0);
+                return new Packet(type, dataBytes);
+            }
+            catch
+            {
+                byte[] dataBytes = new byte[2];
+                return new Packet(0, dataBytes);
+            }
+        }
+
+        private static bool CheckHeader(byte[] header)
+        {
+            for (int i = 0; i < _headerSize; i++)
+            {
+                if (header[i] != _header[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}
