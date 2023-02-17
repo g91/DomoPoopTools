@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>Bobs_poop_Toolsx</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <COMReference Include="SpeechLib">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>4</VersionMinor>
+      <VersionMajor>5</VersionMajor>
+      <Guid>e6da930b-bba5-44df-ac6f-fe60c1eddec8</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Exomia.Vulkan.Api.Core" Version="1.3.240" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1518.46" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="NLog" Version="5.1.1" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
+    <PackageReference Include="SSH.NET" Version="2020.0.2" />
+    <PackageReference Include="System.Speech" Version="7.0.0" />
+    <PackageReference Include="Vulkan" Version="0.5.1" />
+    <PackageReference Include="WebView2.Runtime.X64" Version="110.0.1587.41" />
+  </ItemGroup>
+
+</Project>
