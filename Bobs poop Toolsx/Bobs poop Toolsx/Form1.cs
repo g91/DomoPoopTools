@@ -27,12 +27,12 @@ using Factory = SharpDX.Direct2D1.Factory;
 using WindowRenderTargetProperties = SharpDX.Direct2D1.RenderTargetProperties;
 using System.Diagnostics;
 using System.IO.Compression;
+using Bobs_poop_Toolsx.Memory;
+using Bobs_poop_Toolsx.Linux;
+using Bobs_poop_Toolsx.Packet;
 
 namespace Bobs_poop_Toolsx
 {
-
-  
-
     public partial class Form1 : Form
     {
         private readonly SpeechRecognitionEngine recognizer = new SpeechRecognitionEngine();
@@ -48,6 +48,18 @@ namespace Bobs_poop_Toolsx
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, int processId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
+
+        [Flags]
+        enum ProcessAccessFlags : uint
+        {
+            VirtualMemoryRead = 0x00000010,
+        }
 
         [DllImport("user32.dll")]
         public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
@@ -83,8 +95,6 @@ namespace Bobs_poop_Toolsx
         private const int KEYEVENTF_KEYUP = 0x0002;
         private SshHelper _sshHelper;
 
-
-
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
@@ -96,14 +106,10 @@ namespace Bobs_poop_Toolsx
             return CallNextHookEx(hookId, nCode, wParam, lParam);
         }
 
-
-
         public Form1()
         {
             mapFile = new StreamWriter("map.lua");
-
             InitializeComponent();
-
 
             recognizer.SetInputToDefaultAudioDevice();
             recognizer.LoadGrammar(new DictationGrammar());
@@ -116,38 +122,27 @@ namespace Bobs_poop_Toolsx
 
             recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
             recognizer.RecognizeAsync(RecognizeMode.Multiple);
-
-            _sshHelper = new SshHelper();
-
-            _sshHelper.AddServer("server1", "host1", "username1", "password1");
-            _sshHelper.AddServer("server2", "host2", "username2", "password2");
-            //string result = _sshHelper.ExecuteCommand("server1", "ls");
-            //MessageBox.Show(result);
-
-
+  
             // Set the initial URL to navigate to
             webView21.Source = new Uri("https://evilsource.net/community/", UriKind.Absolute);
             webView22.Source = new Uri("https://chat.openai.com/chat", UriKind.Absolute);
             webView23.Source = new Uri("https://godbolt.org/", UriKind.Absolute);
 
-            Thread thread2 = new Thread(() =>
-            {
-                OverlayForm2 form = new OverlayForm2();
-                Application.Run(form);
-            });
-            thread2.SetApartmentState(ApartmentState.STA);
-            thread2.Start();
+            //Thread thread2 = new Thread(() =>
+            //{
+            //    OverlayForm2 form = new OverlayForm2();
+            //    Application.Run(form);
+            //});
+            //thread2.SetApartmentState(ApartmentState.STA);
+            //thread2.Start();
 
-            Thread thread = new Thread(() =>
-            {
-                OverlayForm form = new OverlayForm();
-                Application.Run(form);
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-
-
-
+            //Thread thread = new Thread(() =>
+            //{
+            //    OverlayForm form = new OverlayForm();
+            //    Application.Run(form);
+            //});
+            //thread.SetApartmentState(ApartmentState.STA);
+            //thread.Start();
         }
 
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -276,33 +271,33 @@ namespace Bobs_poop_Toolsx
 
         public void ListFoldersAndTxtFiles()
         {
-            // Get the path of the folder you want to search in
-            string folderPath = @"D:\Files\Documents";
+            //// Get the path of the folder you want to search in
+            //string folderPath = @"D:\Files\Documents";
 
-            // Get a list of all the subfolders in the folder
-            string[] subfolders = Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
+            //// Get a list of all the subfolders in the folder
+            //string[] subfolders = Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
 
-            // Create a list to store the paths of all the txt files in the folder and its subfolders
-            var txtFiles = subfolders.SelectMany(subfolder => Directory.GetFiles(subfolder, "*.txt", SearchOption.TopDirectoryOnly));
-            foreach (string txtFile in txtFiles)
-            {
-                listBox2.Items.Add(txtFile);
-            }
+            //// Create a list to store the paths of all the txt files in the folder and its subfolders
+            //var txtFiles = subfolders.SelectMany(subfolder => Directory.GetFiles(subfolder, "*.txt", SearchOption.TopDirectoryOnly));
+            //foreach (string txtFile in txtFiles)
+            //{
+            //    listBox2.Items.Add(txtFile);
+            //}
 
-            // Add an event handler to the listBox2 to display the contents of the selected txt file in the textBox3
-            listBox2.SelectedIndexChanged += (sender, args) =>
-            {
-                string selectedItem = (string)listBox2.SelectedItem;
-                if (selectedItem.EndsWith(".txt"))
-                {
-                    string txtFileContents = File.ReadAllText(selectedItem);
-                    textBox3.Text = txtFileContents;
-                }
-                else
-                {
-                    textBox3.Text = "";
-                }
-            };
+            //// Add an event handler to the listBox2 to display the contents of the selected txt file in the textBox3
+            //listBox2.SelectedIndexChanged += (sender, args) =>
+            //{
+            //    string selectedItem = (string)listBox2.SelectedItem;
+            //    if (selectedItem.EndsWith(".txt"))
+            //    {
+            //        string txtFileContents = File.ReadAllText(selectedItem);
+            //        textBox3.Text = txtFileContents;
+            //    }
+            //    else
+            //    {
+            //        textBox3.Text = "";
+            //    }
+            //};
         }
 
 
@@ -449,6 +444,41 @@ namespace Bobs_poop_Toolsx
             }
         }
 
+        static int FindPattern(byte[] buffer, byte[] pattern)
+        {
+            for (int i = 0; i <= buffer.Length - pattern.Length; i++)
+            {
+                bool match = true;
+                for (int j = 0; j < pattern.Length; j++)
+                {
+                    if (buffer[i + j] != pattern[j])
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        static int FindString(byte[] buffer, string searchString)
+        {
+            int searchLength = searchString.Length;
+            for (int i = 0; i <= buffer.Length - searchLength; i++)
+            {
+                string candidate = Encoding.ASCII.GetString(buffer, i, searchLength);
+                if (candidate == searchString)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             StartConsole();
@@ -456,6 +486,167 @@ namespace Bobs_poop_Toolsx
             textBox2.Text += "the1Domo's toolbox v2.4" + Environment.NewLine;
             Console.WriteLine(textBox2.Text);
             Console.Write("> ");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Get the process ID of the target process
+            int processId = Process.GetProcessesByName("habbo.exe").FirstOrDefault()?.Id ?? -1;
+            if (processId == -1)
+            {
+                Console.WriteLine("Could not find the target process.");
+                return;
+            }
+
+            // Open the target process for reading its memory
+            IntPtr processHandle = OpenProcess(ProcessAccessFlags.VirtualMemoryRead, false, processId);
+            if (processHandle == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to open the target process.");
+                return;
+            }
+
+            // Define the byte pattern to search for in the memory
+            byte[] pattern = { 0x68, 0x65, 0x6c, 0x6c, 0x6f }; // "hello" in ASCII
+
+            // Search for the pattern in the memory of the target process
+            IntPtr baseAddress = Process.GetProcessById(processId).MainModule.BaseAddress;
+            IntPtr endAddress = new IntPtr((long)baseAddress + Process.GetProcessById(processId).MainModule.ModuleMemorySize);
+            byte[] buffer = new byte[4096];
+            int bytesRead = 0;
+            while (baseAddress.ToInt64() < endAddress.ToInt64())
+            {
+                // Read a chunk of memory into the buffer
+                if (!ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, out bytesRead))
+                {
+                    Console.WriteLine("Failed to read process memory.");
+                    return;
+                }
+
+                // Search for the pattern in the buffer
+                int index = FindPattern(buffer, pattern);
+                if (index != -1)
+                {
+                    // Calculate the address of the pattern in the process memory
+                    IntPtr address = new IntPtr(baseAddress.ToInt64() + index);
+
+                    // Read a memory dump of the region containing the pattern
+                    byte[] dump = new byte[1024];
+                    if (!ReadProcessMemory(processHandle, address, dump, dump.Length, out bytesRead))
+                    {
+                        Console.WriteLine("Failed to read process memory.");
+                        return;
+                    }
+
+                    // Convert the memory dump to a string representation
+                    StringBuilder dumpBuilder = new StringBuilder();
+                    foreach (byte b in dump)
+                    {
+                        dumpBuilder.AppendFormat("{0:x2} ", b);
+                    }
+
+                    // Display the memory address and the memory dump in a text box
+                    Console.WriteLine("Memory address: 0x{0:x}", address.ToInt64());
+                    Console.WriteLine("Memory dump: {0}", dumpBuilder.ToString());
+                    return;
+                }
+
+                // Move the base address to the next chunk of memory
+                baseAddress = new IntPtr(baseAddress.ToInt64() + buffer.Length);
+            }
+
+            Console.WriteLine("Could not find the pattern in the memory.");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Get the process ID of the target process
+            int processId = Process.GetProcessesByName("habbo").FirstOrDefault()?.Id ?? -1;
+            if (processId == -1)
+            {
+                Console.WriteLine("Could not find the target process.");
+                return;
+            }
+
+            // Open the target process for reading its memory
+            IntPtr processHandle = OpenProcess(ProcessAccessFlags.VirtualMemoryRead, false, processId);
+            if (processHandle == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to open the target process.");
+                return;
+            }
+
+            // Define the string to search for in the memory
+            string searchString = "Hello";
+
+            // Search for the string in the memory of the target process
+            IntPtr baseAddress = Process.GetProcessById(processId).MainModule.BaseAddress;
+            IntPtr endAddress = new IntPtr((long)baseAddress + Process.GetProcessById(processId).MainModule.ModuleMemorySize);
+            byte[] buffer = new byte[4096];
+            int bytesRead = 0;
+            MemorySearcher Tools = new MemorySearcher(processId);
+
+            IntPtr test = Tools.SearchInt32(5, baseAddress, endAddress);
+            Console.WriteLine("0x{0:x}", test);
+
+            IntPtr test2 = Tools.SearchUnicodeString(searchString, baseAddress, endAddress);
+            Console.WriteLine("0x{0:x}", test2);
+
+
+            var results = Tools.Search_List_String(searchString, baseAddress, endAddress);
+     
+            // Print out the memory addresses where the value was found
+            if (results.Count == 0)
+            {
+                Console.WriteLine("Value not found in the memory of the target process.");
+            }
+            else
+            {
+                Console.WriteLine($"Found {results.Count} instances of the value in the memory of the target process:");
+                foreach (IntPtr address in results)
+                {
+                    Console.WriteLine($"  {address}");
+                }
+            }
+
+
+            while (baseAddress.ToInt64() < endAddress.ToInt64())
+            {
+                // Read a chunk of memory into the buffer
+                if (!ReadProcessMemory(processHandle, baseAddress, buffer, buffer.Length, out bytesRead))
+                {
+                    Console.WriteLine("Failed to read process memory.");
+                    return;
+                }
+
+                // Search for the string in the buffer
+                int index = FindString(buffer, searchString);
+                if (index != -1)
+                {
+                    // Calculate the address of the string in the process memory
+                    IntPtr address = new IntPtr(baseAddress.ToInt64() + index);
+
+                    // Display the memory address of the string
+                    Console.WriteLine("String found at memory address: 0x{0:x}", address.ToInt64());
+                }
+
+                // Move the base address to the next chunk of memory
+                baseAddress = new IntPtr(baseAddress.ToInt64() + buffer.Length);
+            }
+
+            Console.WriteLine("Memory search complete.");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            TcpProxyServer server = new TcpProxyServer("127.0.0.1", 8080, "206.53.61.2", 80);
+            Console.WriteLine("Starting server...");
+            server.Start();
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

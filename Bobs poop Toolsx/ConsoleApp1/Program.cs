@@ -347,7 +347,7 @@ class Program
                 break;
             }
 
-            await packetHandler.HandlePacket(client, packet);
+           // await packetHandler.HandlePacket(client, packet);
         }
 
         clients.TryRemove(client.RemoteEndPoint.ToString(), out _);

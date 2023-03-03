@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -45,6 +46,8 @@
             this.Tools = new System.Windows.Forms.TabPage();
             this.tabControl4 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.utilities = new System.Windows.Forms.TabPage();
             this.tabControl5 = new System.Windows.Forms.TabControl();
@@ -55,6 +58,9 @@
             this.notes = new System.Windows.Forms.TabPage();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.listBox2 = new System.Windows.Forms.ListBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.tabControl1.SuspendLayout();
             this.EvilSource.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
@@ -64,6 +70,7 @@
             this.tabControl3.SuspendLayout();
             this.Tools.SuspendLayout();
             this.tabControl4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.utilities.SuspendLayout();
             this.tabControl5.SuspendLayout();
             this.ChatGPT.SuspendLayout();
@@ -237,6 +244,8 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.button2);
+            this.tabPage5.Controls.Add(this.button1);
             this.tabPage5.Location = new System.Drawing.Point(4, 24);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
@@ -244,6 +253,26 @@
             this.tabPage5.TabIndex = 0;
             this.tabPage5.Text = "tabPage5";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(185, 60);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(42, 37);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // tabPage6
             // 
@@ -296,7 +325,6 @@
             this.webView22.Size = new System.Drawing.Size(1326, 721);
             this.webView22.TabIndex = 0;
             this.webView22.ZoomFactor = 1D;
-           // this.webView22.Click += new System.EventHandler(this.webView22_Click);
             // 
             // godbolt
             // 
@@ -308,7 +336,6 @@
             this.godbolt.TabIndex = 1;
             this.godbolt.Text = "godbolt";
             this.godbolt.UseVisualStyleBackColor = true;
-            //this.godbolt.Click += new System.EventHandler(this.tabPage8_Click);
             // 
             // webView23
             // 
@@ -320,7 +347,6 @@
             this.webView23.Size = new System.Drawing.Size(1330, 727);
             this.webView23.TabIndex = 1;
             this.webView23.ZoomFactor = 1D;
-            //this.webView23.Click += new System.EventHandler(this.webView23_Click);
             // 
             // notes
             // 
@@ -350,11 +376,36 @@
             this.listBox2.Size = new System.Drawing.Size(131, 574);
             this.listBox2.TabIndex = 0;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(705, 11);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(786, 11);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 23);
+            this.textBox4.TabIndex = 5;
+            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1523, 865);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -371,6 +422,7 @@
             this.tabControl3.ResumeLayout(false);
             this.Tools.ResumeLayout(false);
             this.tabControl4.ResumeLayout(false);
+            this.tabPage5.ResumeLayout(false);
             this.utilities.ResumeLayout(false);
             this.tabControl5.ResumeLayout(false);
             this.ChatGPT.ResumeLayout(false);
@@ -413,5 +465,10 @@
         private TextBox textBox3;
         private ListBox listBox2;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView23;
+        private Button button1;
+        private Button button2;
+        private Button button3;
+        private TextBox textBox4;
+        private NotifyIcon notifyIcon1;
     }
 }
