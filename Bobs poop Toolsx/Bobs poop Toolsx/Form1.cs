@@ -42,9 +42,12 @@ namespace Bobs_poop_Toolsx
         private DateTime lastRecognized = DateTime.Now;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private Thread _consoleThread;
+        // Replace 'example.txt' with the path to your text file
+        private TextFileReader reader = new TextFileReader(@"C:\\Users\\Domo\\AppData\\Roaming\\SecondLife\\theevildomo_resident\\chat.txt");
 
         public static IntPtr hookId = IntPtr.Zero;
         public static StreamWriter mapFile;
+        public static Thread t;
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -145,6 +148,8 @@ namespace Bobs_poop_Toolsx
             //thread.Start();
         }
 
+  
+
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             switch (e.Result.Text)
@@ -170,6 +175,27 @@ namespace Bobs_poop_Toolsx
                     }
                     break;
 
+
+
+                case "read game":
+                    // Start reading the file in a separate thread
+                    reader.Start();
+
+
+                    textBox2.Text += "start Second Life" + Environment.NewLine;
+                    Console.WriteLine(" start Second Life");
+                    Console.Write("> ");
+                    break;
+
+                case "stop game1":
+                    // Start reading the file in a separate thread
+                    reader.Start();
+
+
+                    textBox2.Text += "stop Second Life" + Environment.NewLine;
+                    Console.WriteLine(" stop Second Life");
+                    Console.Write("> ");
+                    break;
 
                 case "start listening":
                     isListening = true;
@@ -437,10 +463,23 @@ namespace Bobs_poop_Toolsx
                     int bufferSize = Int32.Parse(sinput[4]);
                     TestForBufferOverflow(ipAddress, port, numAttempts, bufferSize);
                 }
+                else if (sinput[0] == "SecondLife")
+                {
+                    // Start reading the file in a separate thread
+                    reader.Start();
+                    Console.WriteLine(" start Second Life");
+                    Console.Write("> ");
+                    break;
+                }
+                else if (sinput[0] == "StopSecondLife")
+                {
+                    // Start reading the file in a separate thread
+                    reader.Stop();
+                    Console.WriteLine(" Stop Second Life");
+                    Console.Write("> ");
+                    break;
+                }
 
-
-
-                
             }
         }
 
