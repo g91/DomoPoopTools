@@ -113,7 +113,7 @@ namespace Bobs_poop_Toolsx
         {
             mapFile = new StreamWriter("map.lua");
             InitializeComponent();
-
+            //start Second Life
             recognizer.SetInputToDefaultAudioDevice();
             recognizer.LoadGrammar(new DictationGrammar());
 
@@ -125,7 +125,7 @@ namespace Bobs_poop_Toolsx
 
             recognizer.SpeechRecognized += Recognizer_SpeechRecognized;
             recognizer.RecognizeAsync(RecognizeMode.Multiple);
-  
+
             // Set the initial URL to navigate to
             webView21.Source = new Uri("https://evilsource.net/community/", UriKind.Absolute);
             webView22.Source = new Uri("https://chat.openai.com/chat", UriKind.Absolute);
@@ -148,7 +148,7 @@ namespace Bobs_poop_Toolsx
             //thread.Start();
         }
 
-  
+
 
         private void Recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
@@ -236,7 +236,7 @@ namespace Bobs_poop_Toolsx
                     break;
                 case "say":
                     isListening = true;
-                   // button1.Text = "Stop Listening";
+                    // button1.Text = "Stop Listening";
                     Console.WriteLine(" !say");
                     Console.Write("> ");
                     textBox2.Text += "say" + Environment.NewLine;
@@ -260,7 +260,7 @@ namespace Bobs_poop_Toolsx
                     isListening = false;
                     textBox1.Clear();
                     //button1.Text = "Start Listening";
-                   textBox2.Text += "stop" + Environment.NewLine;
+                    textBox2.Text += "stop" + Environment.NewLine;
                     break;
                 default:
                     if (isListening)
@@ -446,16 +446,19 @@ namespace Bobs_poop_Toolsx
             {
                 Console.Write("> ");
                 string input = Console.ReadLine();
-                string[] sinput =  input.Split(' ');
+                string[] sinput = input.Split(' ');
 
 
                 //IsTcpSocketOnline 206.53.61.3 80
-                if (sinput[0] == "IsTcpSocketOnline") {
+                if (sinput[0] == "IsTcpSocketOnline")
+                {
                     string ipAddress = sinput[1];
                     int port = Int32.Parse(sinput[2]);
                     int timeout = 100;
                     IsTcpSocketOnline(ipAddress, port, timeout);
-                }else if(sinput[0] == "TestForBufferOverflow") {
+                }
+                else if (sinput[0] == "TestForBufferOverflow")
+                {
                     //TestForBufferOverflow 206.53.61.3 80 10 10000
                     string ipAddress = sinput[1];
                     int port = Int32.Parse(sinput[2]);
@@ -468,16 +471,12 @@ namespace Bobs_poop_Toolsx
                     // Start reading the file in a separate thread
                     reader.Start();
                     Console.WriteLine(" start Second Life");
-                    Console.Write("> ");
-                    break;
                 }
                 else if (sinput[0] == "StopSecondLife")
                 {
                     // Start reading the file in a separate thread
                     reader.Stop();
                     Console.WriteLine(" Stop Second Life");
-                    Console.Write("> ");
-                    break;
                 }
 
             }
@@ -520,11 +519,13 @@ namespace Bobs_poop_Toolsx
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            button4.Text = "start Second Life";
             StartConsole();
             ListFoldersAndTxtFiles();
             textBox2.Text += "the1Domo's toolbox v2.4" + Environment.NewLine;
             Console.WriteLine(textBox2.Text);
             Console.Write("> ");
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -633,7 +634,7 @@ namespace Bobs_poop_Toolsx
 
 
             var results = Tools.Search_List_String(searchString, baseAddress, endAddress);
-     
+
             // Print out the memory addresses where the value was found
             if (results.Count == 0)
             {
@@ -686,6 +687,30 @@ namespace Bobs_poop_Toolsx
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+
+        int sli = 0;
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (sli == 0)
+            {
+                button4.Text = "Stop Second Life";
+                // Start reading the file in a separate thread
+                reader.Start();
+                Console.WriteLine("! start Second Life");
+                sli = 1;
+                Console.Write("> ");
+            }
+            else
+            {
+                button4.Text = "start Second Life";
+                // Start reading the file in a separate thread
+                reader.Stop();
+                Console.WriteLine("! Stop Second Life");
+                sli = 0;
+                Console.Write("> ");
+            }
         }
     }
 }

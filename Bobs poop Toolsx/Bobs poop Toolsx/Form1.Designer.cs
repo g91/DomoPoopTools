@@ -28,412 +28,423 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.EvilSource = new System.Windows.Forms.TabPage();
-            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.Xbox = new System.Windows.Forms.TabPage();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.Xbox360 = new System.Windows.Forms.TabPage();
-            this.tabControl3 = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.Tools = new System.Windows.Forms.TabPage();
-            this.tabControl4 = new System.Windows.Forms.TabControl();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.utilities = new System.Windows.Forms.TabPage();
-            this.tabControl5 = new System.Windows.Forms.TabControl();
-            this.ChatGPT = new System.Windows.Forms.TabPage();
-            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.godbolt = new System.Windows.Forms.TabPage();
-            this.webView23 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.notes = new System.Windows.Forms.TabPage();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.tabControl1.SuspendLayout();
-            this.EvilSource.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
-            this.Xbox.SuspendLayout();
-            this.tabControl2.SuspendLayout();
-            this.Xbox360.SuspendLayout();
-            this.tabControl3.SuspendLayout();
-            this.Tools.SuspendLayout();
-            this.tabControl4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            this.utilities.SuspendLayout();
-            this.tabControl5.SuspendLayout();
-            this.ChatGPT.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
-            this.godbolt.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView23)).BeginInit();
-            this.notes.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            listBox1 = new ListBox();
+            textBox1 = new TextBox();
+            textBox2 = new TextBox();
+            tabControl1 = new TabControl();
+            EvilSource = new TabPage();
+            webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            Xbox = new TabPage();
+            tabControl2 = new TabControl();
+            tabPage1 = new TabPage();
+            tabPage2 = new TabPage();
+            Xbox360 = new TabPage();
+            tabControl3 = new TabControl();
+            tabPage3 = new TabPage();
+            tabPage4 = new TabPage();
+            Tools = new TabPage();
+            tabControl4 = new TabControl();
+            tabPage5 = new TabPage();
+            button2 = new Button();
+            button1 = new Button();
+            tabPage6 = new TabPage();
+            utilities = new TabPage();
+            tabControl5 = new TabControl();
+            ChatGPT = new TabPage();
+            webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            godbolt = new TabPage();
+            webView23 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            notes = new TabPage();
+            textBox3 = new TextBox();
+            listBox2 = new ListBox();
+            button3 = new Button();
+            textBox4 = new TextBox();
+            notifyIcon1 = new NotifyIcon(components);
+            button4 = new Button();
+            tabControl1.SuspendLayout();
+            EvilSource.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
+            Xbox.SuspendLayout();
+            tabControl2.SuspendLayout();
+            Xbox360.SuspendLayout();
+            tabControl3.SuspendLayout();
+            Tools.SuspendLayout();
+            tabControl4.SuspendLayout();
+            tabPage5.SuspendLayout();
+            utilities.SuspendLayout();
+            tabControl5.SuspendLayout();
+            ChatGPT.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView22).BeginInit();
+            godbolt.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)webView23).BeginInit();
+            notes.SuspendLayout();
+            SuspendLayout();
             // 
             // listBox1
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(443, 12);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(256, 64);
-            this.listBox1.TabIndex = 0;
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 15;
+            listBox1.Location = new Point(443, 12);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(256, 64);
+            listBox1.TabIndex = 0;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(181, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(256, 64);
-            this.textBox1.TabIndex = 1;
+            textBox1.Location = new Point(181, 12);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(256, 64);
+            textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(1, 12);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(178, 524);
-            this.textBox2.TabIndex = 2;
+            textBox2.Location = new Point(1, 12);
+            textBox2.Multiline = true;
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(178, 524);
+            textBox2.TabIndex = 2;
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.EvilSource);
-            this.tabControl1.Controls.Add(this.Xbox);
-            this.tabControl1.Controls.Add(this.Xbox360);
-            this.tabControl1.Controls.Add(this.Tools);
-            this.tabControl1.Controls.Add(this.utilities);
-            this.tabControl1.Controls.Add(this.notes);
-            this.tabControl1.Location = new System.Drawing.Point(181, 82);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1341, 781);
-            this.tabControl1.TabIndex = 3;
+            tabControl1.Controls.Add(EvilSource);
+            tabControl1.Controls.Add(Xbox);
+            tabControl1.Controls.Add(Xbox360);
+            tabControl1.Controls.Add(Tools);
+            tabControl1.Controls.Add(utilities);
+            tabControl1.Controls.Add(notes);
+            tabControl1.Location = new Point(181, 82);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1341, 781);
+            tabControl1.TabIndex = 3;
             // 
             // EvilSource
             // 
-            this.EvilSource.Controls.Add(this.webView21);
-            this.EvilSource.Location = new System.Drawing.Point(4, 24);
-            this.EvilSource.Name = "EvilSource";
-            this.EvilSource.Padding = new System.Windows.Forms.Padding(3);
-            this.EvilSource.Size = new System.Drawing.Size(1333, 753);
-            this.EvilSource.TabIndex = 0;
-            this.EvilSource.Text = "EvilSource";
-            this.EvilSource.UseVisualStyleBackColor = true;
+            EvilSource.Controls.Add(webView21);
+            EvilSource.Location = new Point(4, 24);
+            EvilSource.Name = "EvilSource";
+            EvilSource.Padding = new Padding(3);
+            EvilSource.Size = new Size(1333, 753);
+            EvilSource.TabIndex = 0;
+            EvilSource.Text = "EvilSource";
+            EvilSource.UseVisualStyleBackColor = true;
             // 
             // webView21
             // 
-            this.webView21.AllowExternalDrop = true;
-            this.webView21.CreationProperties = null;
-            this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView21.Location = new System.Drawing.Point(0, 3);
-            this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(1333, 750);
-            this.webView21.TabIndex = 0;
-            this.webView21.ZoomFactor = 1D;
+            webView21.AllowExternalDrop = true;
+            webView21.CreationProperties = null;
+            webView21.DefaultBackgroundColor = Color.White;
+            webView21.Location = new Point(0, 3);
+            webView21.Name = "webView21";
+            webView21.Size = new Size(1333, 750);
+            webView21.TabIndex = 0;
+            webView21.ZoomFactor = 1D;
             // 
             // Xbox
             // 
-            this.Xbox.Controls.Add(this.tabControl2);
-            this.Xbox.Location = new System.Drawing.Point(4, 24);
-            this.Xbox.Name = "Xbox";
-            this.Xbox.Padding = new System.Windows.Forms.Padding(3);
-            this.Xbox.Size = new System.Drawing.Size(1333, 753);
-            this.Xbox.TabIndex = 1;
-            this.Xbox.Text = "Xbox";
-            this.Xbox.UseVisualStyleBackColor = true;
+            Xbox.Controls.Add(tabControl2);
+            Xbox.Location = new Point(4, 24);
+            Xbox.Name = "Xbox";
+            Xbox.Padding = new Padding(3);
+            Xbox.Size = new Size(1333, 753);
+            Xbox.TabIndex = 1;
+            Xbox.Text = "Xbox";
+            Xbox.UseVisualStyleBackColor = true;
             // 
             // tabControl2
             // 
-            this.tabControl2.Controls.Add(this.tabPage1);
-            this.tabControl2.Controls.Add(this.tabPage2);
-            this.tabControl2.Location = new System.Drawing.Point(-1, -1);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1125, 586);
-            this.tabControl2.TabIndex = 0;
+            tabControl2.Controls.Add(tabPage1);
+            tabControl2.Controls.Add(tabPage2);
+            tabControl2.Location = new Point(-1, -1);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(1125, 586);
+            tabControl2.TabIndex = 0;
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1117, 558);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 24);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1117, 558);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
             // Xbox360
             // 
-            this.Xbox360.Controls.Add(this.tabControl3);
-            this.Xbox360.Location = new System.Drawing.Point(4, 24);
-            this.Xbox360.Name = "Xbox360";
-            this.Xbox360.Size = new System.Drawing.Size(1333, 753);
-            this.Xbox360.TabIndex = 2;
-            this.Xbox360.Text = "Xbox360";
-            this.Xbox360.UseVisualStyleBackColor = true;
+            Xbox360.Controls.Add(tabControl3);
+            Xbox360.Location = new Point(4, 24);
+            Xbox360.Name = "Xbox360";
+            Xbox360.Size = new Size(1333, 753);
+            Xbox360.TabIndex = 2;
+            Xbox360.Text = "Xbox360";
+            Xbox360.UseVisualStyleBackColor = true;
             // 
             // tabControl3
             // 
-            this.tabControl3.Controls.Add(this.tabPage3);
-            this.tabControl3.Controls.Add(this.tabPage4);
-            this.tabControl3.Location = new System.Drawing.Point(-2, -2);
-            this.tabControl3.Name = "tabControl3";
-            this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(1125, 586);
-            this.tabControl3.TabIndex = 1;
+            tabControl3.Controls.Add(tabPage3);
+            tabControl3.Controls.Add(tabPage4);
+            tabControl3.Location = new Point(-2, -2);
+            tabControl3.Name = "tabControl3";
+            tabControl3.SelectedIndex = 0;
+            tabControl3.Size = new Size(1125, 586);
+            tabControl3.TabIndex = 1;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 24);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "tabPage3";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(1117, 558);
+            tabPage3.TabIndex = 0;
+            tabPage3.Text = "tabPage3";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(4, 24);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage4.TabIndex = 1;
-            this.tabPage4.Text = "tabPage4";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            tabPage4.Location = new Point(4, 24);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(1117, 558);
+            tabPage4.TabIndex = 1;
+            tabPage4.Text = "tabPage4";
+            tabPage4.UseVisualStyleBackColor = true;
             // 
             // Tools
             // 
-            this.Tools.Controls.Add(this.tabControl4);
-            this.Tools.Location = new System.Drawing.Point(4, 24);
-            this.Tools.Name = "Tools";
-            this.Tools.Size = new System.Drawing.Size(1333, 753);
-            this.Tools.TabIndex = 3;
-            this.Tools.Text = "Tools";
-            this.Tools.UseVisualStyleBackColor = true;
+            Tools.Controls.Add(tabControl4);
+            Tools.Location = new Point(4, 24);
+            Tools.Name = "Tools";
+            Tools.Size = new Size(1333, 753);
+            Tools.TabIndex = 3;
+            Tools.Text = "Tools";
+            Tools.UseVisualStyleBackColor = true;
             // 
             // tabControl4
             // 
-            this.tabControl4.Controls.Add(this.tabPage5);
-            this.tabControl4.Controls.Add(this.tabPage6);
-            this.tabControl4.Location = new System.Drawing.Point(-2, -2);
-            this.tabControl4.Name = "tabControl4";
-            this.tabControl4.SelectedIndex = 0;
-            this.tabControl4.Size = new System.Drawing.Size(1125, 586);
-            this.tabControl4.TabIndex = 1;
+            tabControl4.Controls.Add(tabPage5);
+            tabControl4.Controls.Add(tabPage6);
+            tabControl4.Location = new Point(-2, -2);
+            tabControl4.Name = "tabControl4";
+            tabControl4.SelectedIndex = 0;
+            tabControl4.Size = new Size(1125, 586);
+            tabControl4.TabIndex = 1;
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.button2);
-            this.tabPage5.Controls.Add(this.button1);
-            this.tabPage5.Location = new System.Drawing.Point(4, 24);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage5.TabIndex = 0;
-            this.tabPage5.Text = "tabPage5";
-            this.tabPage5.UseVisualStyleBackColor = true;
+            tabPage5.Controls.Add(button2);
+            tabPage5.Controls.Add(button1);
+            tabPage5.Location = new Point(4, 24);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(1117, 558);
+            tabPage5.TabIndex = 0;
+            tabPage5.Text = "tabPage5";
+            tabPage5.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(185, 60);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            button2.Location = new Point(185, 60);
+            button2.Name = "button2";
+            button2.Size = new Size(75, 23);
+            button2.TabIndex = 1;
+            button2.Text = "button2";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(42, 37);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            button1.Location = new Point(42, 37);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(4, 24);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(1117, 558);
-            this.tabPage6.TabIndex = 1;
-            this.tabPage6.Text = "tabPage6";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            tabPage6.Location = new Point(4, 24);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(1117, 558);
+            tabPage6.TabIndex = 1;
+            tabPage6.Text = "tabPage6";
+            tabPage6.UseVisualStyleBackColor = true;
             // 
             // utilities
             // 
-            this.utilities.Controls.Add(this.tabControl5);
-            this.utilities.Location = new System.Drawing.Point(4, 24);
-            this.utilities.Name = "utilities";
-            this.utilities.Size = new System.Drawing.Size(1333, 753);
-            this.utilities.TabIndex = 4;
-            this.utilities.Text = "utilities";
-            this.utilities.UseVisualStyleBackColor = true;
+            utilities.Controls.Add(tabControl5);
+            utilities.Location = new Point(4, 24);
+            utilities.Name = "utilities";
+            utilities.Size = new Size(1333, 753);
+            utilities.TabIndex = 4;
+            utilities.Text = "utilities";
+            utilities.UseVisualStyleBackColor = true;
             // 
             // tabControl5
             // 
-            this.tabControl5.Controls.Add(this.ChatGPT);
-            this.tabControl5.Controls.Add(this.godbolt);
-            this.tabControl5.Location = new System.Drawing.Point(-2, -2);
-            this.tabControl5.Name = "tabControl5";
-            this.tabControl5.SelectedIndex = 0;
-            this.tabControl5.Size = new System.Drawing.Size(1339, 755);
-            this.tabControl5.TabIndex = 2;
+            tabControl5.Controls.Add(ChatGPT);
+            tabControl5.Controls.Add(godbolt);
+            tabControl5.Location = new Point(-2, -2);
+            tabControl5.Name = "tabControl5";
+            tabControl5.SelectedIndex = 0;
+            tabControl5.Size = new Size(1339, 755);
+            tabControl5.TabIndex = 2;
             // 
             // ChatGPT
             // 
-            this.ChatGPT.Controls.Add(this.webView22);
-            this.ChatGPT.Location = new System.Drawing.Point(4, 24);
-            this.ChatGPT.Name = "ChatGPT";
-            this.ChatGPT.Padding = new System.Windows.Forms.Padding(3);
-            this.ChatGPT.Size = new System.Drawing.Size(1331, 727);
-            this.ChatGPT.TabIndex = 0;
-            this.ChatGPT.Text = "ChatGPT";
-            this.ChatGPT.UseVisualStyleBackColor = true;
+            ChatGPT.Controls.Add(webView22);
+            ChatGPT.Location = new Point(4, 24);
+            ChatGPT.Name = "ChatGPT";
+            ChatGPT.Padding = new Padding(3);
+            ChatGPT.Size = new Size(1331, 727);
+            ChatGPT.TabIndex = 0;
+            ChatGPT.Text = "ChatGPT";
+            ChatGPT.UseVisualStyleBackColor = true;
             // 
             // webView22
             // 
-            this.webView22.AllowExternalDrop = true;
-            this.webView22.CreationProperties = null;
-            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView22.Location = new System.Drawing.Point(-2, 0);
-            this.webView22.Name = "webView22";
-            this.webView22.Size = new System.Drawing.Size(1326, 721);
-            this.webView22.TabIndex = 0;
-            this.webView22.ZoomFactor = 1D;
+            webView22.AllowExternalDrop = true;
+            webView22.CreationProperties = null;
+            webView22.DefaultBackgroundColor = Color.White;
+            webView22.Location = new Point(-2, 0);
+            webView22.Name = "webView22";
+            webView22.Size = new Size(1326, 721);
+            webView22.TabIndex = 0;
+            webView22.ZoomFactor = 1D;
             // 
             // godbolt
             // 
-            this.godbolt.Controls.Add(this.webView23);
-            this.godbolt.Location = new System.Drawing.Point(4, 24);
-            this.godbolt.Name = "godbolt";
-            this.godbolt.Padding = new System.Windows.Forms.Padding(3);
-            this.godbolt.Size = new System.Drawing.Size(1331, 727);
-            this.godbolt.TabIndex = 1;
-            this.godbolt.Text = "godbolt";
-            this.godbolt.UseVisualStyleBackColor = true;
+            godbolt.Controls.Add(webView23);
+            godbolt.Location = new Point(4, 24);
+            godbolt.Name = "godbolt";
+            godbolt.Padding = new Padding(3);
+            godbolt.Size = new Size(1331, 727);
+            godbolt.TabIndex = 1;
+            godbolt.Text = "godbolt";
+            godbolt.UseVisualStyleBackColor = true;
             // 
             // webView23
             // 
-            this.webView23.AllowExternalDrop = true;
-            this.webView23.CreationProperties = null;
-            this.webView23.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView23.Location = new System.Drawing.Point(-2, -3);
-            this.webView23.Name = "webView23";
-            this.webView23.Size = new System.Drawing.Size(1330, 727);
-            this.webView23.TabIndex = 1;
-            this.webView23.ZoomFactor = 1D;
+            webView23.AllowExternalDrop = true;
+            webView23.CreationProperties = null;
+            webView23.DefaultBackgroundColor = Color.White;
+            webView23.Location = new Point(-2, -3);
+            webView23.Name = "webView23";
+            webView23.Size = new Size(1330, 727);
+            webView23.TabIndex = 1;
+            webView23.ZoomFactor = 1D;
             // 
             // notes
             // 
-            this.notes.Controls.Add(this.textBox3);
-            this.notes.Controls.Add(this.listBox2);
-            this.notes.Location = new System.Drawing.Point(4, 24);
-            this.notes.Name = "notes";
-            this.notes.Size = new System.Drawing.Size(1333, 753);
-            this.notes.TabIndex = 5;
-            this.notes.Text = "notes";
-            this.notes.UseVisualStyleBackColor = true;
+            notes.Controls.Add(textBox3);
+            notes.Controls.Add(listBox2);
+            notes.Location = new Point(4, 24);
+            notes.Name = "notes";
+            notes.Size = new Size(1333, 753);
+            notes.TabIndex = 5;
+            notes.Text = "notes";
+            notes.UseVisualStyleBackColor = true;
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(140, 3);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(866, 574);
-            this.textBox3.TabIndex = 1;
+            textBox3.Location = new Point(140, 3);
+            textBox3.Multiline = true;
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(866, 574);
+            textBox3.TabIndex = 1;
             // 
             // listBox2
             // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.ItemHeight = 15;
-            this.listBox2.Location = new System.Drawing.Point(3, 3);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(131, 574);
-            this.listBox2.TabIndex = 0;
+            listBox2.FormattingEnabled = true;
+            listBox2.ItemHeight = 15;
+            listBox2.Location = new Point(3, 3);
+            listBox2.Name = "listBox2";
+            listBox2.Size = new Size(131, 574);
+            listBox2.TabIndex = 0;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(705, 11);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            button3.Location = new Point(705, 11);
+            button3.Name = "button3";
+            button3.Size = new Size(75, 23);
+            button3.TabIndex = 4;
+            button3.Text = "button3";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(786, 11);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 23);
-            this.textBox4.TabIndex = 5;
-            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
+            textBox4.Location = new Point(786, 11);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(100, 23);
+            textBox4.TabIndex = 5;
+            textBox4.TextChanged += textBox4_TextChanged;
             // 
             // notifyIcon1
             // 
-            this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
+            notifyIcon1.Text = "notifyIcon1";
+            notifyIcon1.Visible = true;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(705, 40);
+            button4.Name = "button4";
+            button4.Size = new Size(181, 23);
+            button4.TabIndex = 6;
+            button4.Text = "button4";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1523, 865);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.tabControl1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.listBox1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.tabControl1.ResumeLayout(false);
-            this.EvilSource.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
-            this.Xbox.ResumeLayout(false);
-            this.tabControl2.ResumeLayout(false);
-            this.Xbox360.ResumeLayout(false);
-            this.tabControl3.ResumeLayout(false);
-            this.Tools.ResumeLayout(false);
-            this.tabControl4.ResumeLayout(false);
-            this.tabPage5.ResumeLayout(false);
-            this.utilities.ResumeLayout(false);
-            this.tabControl5.ResumeLayout(false);
-            this.ChatGPT.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
-            this.godbolt.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView23)).EndInit();
-            this.notes.ResumeLayout(false);
-            this.notes.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1523, 865);
+            Controls.Add(button4);
+            Controls.Add(textBox4);
+            Controls.Add(button3);
+            Controls.Add(tabControl1);
+            Controls.Add(textBox2);
+            Controls.Add(textBox1);
+            Controls.Add(listBox1);
+            Name = "Form1";
+            Text = "Form1";
+            Load += Form1_Load;
+            tabControl1.ResumeLayout(false);
+            EvilSource.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
+            Xbox.ResumeLayout(false);
+            tabControl2.ResumeLayout(false);
+            Xbox360.ResumeLayout(false);
+            tabControl3.ResumeLayout(false);
+            Tools.ResumeLayout(false);
+            tabControl4.ResumeLayout(false);
+            tabPage5.ResumeLayout(false);
+            utilities.ResumeLayout(false);
+            tabControl5.ResumeLayout(false);
+            ChatGPT.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)webView22).EndInit();
+            godbolt.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)webView23).EndInit();
+            notes.ResumeLayout(false);
+            notes.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -470,5 +481,6 @@
         private Button button3;
         private TextBox textBox4;
         private NotifyIcon notifyIcon1;
+        private Button button4;
     }
 }
